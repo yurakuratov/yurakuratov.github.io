@@ -1,12 +1,20 @@
 ---
-layout: cv
+layout: page
 permalink: /cv/
 title: CV
-nav: true
+nav: false
+published: false
 nav_order: 5
-cv_pdf: /assets/pdf/example_pdf.pdf # you can also use external links here
-cv_format: rendercv # options: rendercv, jsonresume
-description: This is a description of the page. You can modify it in '_pages/cv.md'. You can also change or remove the top pdf download button.
-toc:
-  sidebar: left
+description: CV and professional timeline.
 ---
+
+The full CV page is currently hidden from navigation.
+
+## Research
+
+- Deep learning researcher working on language models, reasoning, agents, evaluation, and efficient training.
+- Publication record to be filled from top-tier AI conference papers.
+
+## Contact
+
+Use the canonical personal email listed on the [homepage]({{ '/' | relative_url }}). Older paper PDFs may list inactive employer-affiliated emails.

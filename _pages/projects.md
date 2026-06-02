@@ -1,11 +1,11 @@
 ---
 layout: page
-title: projects
-permalink: /projects/
-description: A growing collection of your cool projects.
-nav: true
+title: papers
+permalink: /papers/
+description: Per-paper landing pages with simplified explanations, demos, code links, slides, and BibTeX.
+nav: false
+published: false
 nav_order: 3
-display_categories: [work, fun]
 horizontal: false
 ---
 

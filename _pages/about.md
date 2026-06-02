@@ -1,34 +1,205 @@
 ---
-layout: about
-title: about
+layout: default
+title: Yura Kuratov
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
-
-profile:
-  align: right
-  image: prof_pic.jpg
-  image_circular: false # crops the image to make it circular
-  more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
-
-selected_papers: true # includes a list of papers marked as "selected={true}"
-social: true # includes social icons at the bottom of the page
-
-announcements:
-  enabled: true # includes a list of news items
-  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
-  limit: 5 # leave blank to include all the news in the `_news` folder
-
-latest_posts:
-  enabled: true
-  scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
-  limit: 3 # leave blank to include all the blog posts
+description: Compact contact page.
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](https://www.reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+<style>
+  .terminal-home {
+    max-width: 760px;
+    margin: 10vh auto;
+    padding: 0 1.25rem;
+    font-family:
+      ui-monospace,
+      SFMono-Regular,
+      Menlo,
+      Monaco,
+      Consolas,
+      "Liberation Mono",
+      "Courier New",
+      monospace;
+    font-size: 0.95rem;
+    line-height: 1.55;
+  }
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+  body:has(.terminal-home) footer {
+    display: none;
+  }
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+  .terminal-home h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .terminal-intro {
+    align-items: center;
+    display: flex;
+    gap: 1.25rem;
+  }
+
+  .terminal-photo {
+    --photo-scale: 0.9;
+    --photo-source-width: 192px;
+    --photo-x: 0px;
+    --photo-y: 10px;
+    background-image: url("{{ '/assets/img/yurakuratov.jpg' | relative_url }}");
+    background-position: calc(50% + var(--photo-x)) calc(50% + var(--photo-y));
+    background-repeat: no-repeat;
+    background-size: calc(var(--photo-source-width) * var(--photo-scale)) auto;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 6px;
+    flex: 0 0 auto;
+    height: 192px;
+    width: 170px;
+  }
+
+  @media (max-width: 520px) {
+    .terminal-intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+  }
+
+  .terminal-home p,
+  .terminal-home ul {
+    margin-bottom: 0;
+  }
+
+  .terminal-home ul {
+    list-style: none;
+    padding-left: 1.1rem;
+  }
+
+  .terminal-home .muted {
+    opacity: 0.65;
+  }
+
+  .terminal-home a,
+  .terminal-home button.terminal-link {
+    color: var(--global-theme-color);
+    text-decoration: none;
+  }
+
+  .terminal-home a:hover,
+  .terminal-home button.terminal-link:hover {
+    text-decoration: underline;
+  }
+
+  .terminal-block {
+    margin-top: 1.5rem;
+  }
+
+  .terminal-prompt::before {
+    content: "> ";
+    opacity: 0.55;
+  }
+
+  .terminal-link {
+    appearance: none;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+  }
+
+  .terminal-copy {
+    border: 1px solid var(--global-divider-color);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--global-text-color);
+    cursor: pointer;
+    font: inherit;
+    margin-left: 0.45rem;
+    padding: 0.05rem 0.4rem;
+  }
+
+  .terminal-copy:hover {
+    border-color: var(--global-theme-color);
+    color: var(--global-theme-color);
+  }
+</style>
+
+<main class="terminal-home" aria-label="Yura Kuratov home">
+  <!-- <p class="muted">yura@research:~$ whoami</p> -->
+
+  <div class="terminal-intro">
+    <div class="terminal-photo" role="img" aria-label="Yura Kuratov"></div>
+    <div>
+      <h1>Yura Kuratov</h1>
+      <p>deep learning researcher / memory-augmented models</p>
+      <p class="muted">I work on new memory-augmented neural architectures to overcome key transformer limitations in long-context processing, number of sequential operations, test-time adaptation, and compact memory representations.
+      I also study how these ideas connect to external memory for LLMs, including RAG and knowledge graphs.</p>
+    </div>
+  </div>
+
+  <!-- <section class="terminal-block" aria-labelledby="bio-heading">
+    <p id="bio-heading" class="terminal-prompt">bio</p>
+    <ul>
+      <li>researcher at [current lab / organization]</li>
+      <li>previously worked on recurrent memory transformers, long-context benchmarks, and genomic language models</li>
+      <li>co-authored work at NeurIPS, ACL, and other ML/NLP venues</li>
+    </ul>
+  </section> -->
+
+  <!-- uncomment when bio would be expanded -->
+  <!-- <section class="terminal-block" aria-labelledby="research-heading">
+    <p id="research-heading" class="terminal-prompt">research</p>
+    <ul>
+      <li>language models / reasoning / agents / evaluation / efficient training</li>
+    </ul>
+  </section> -->
+  <section id="contact" class="terminal-block" aria-labelledby="contact-heading">
+    <p id="contact-heading" class="terminal-prompt">contact</p>
+    <ul>
+      <li>
+        email:
+        <span id="canonical-email" data-user="yurakuratov" data-domain="gmail" data-tld="com">yurakuratov [at] gmail [dot] com</span>
+        <button id="copy-email" class="terminal-copy" type="button">copy</button>
+      </li>
+      <li class="muted">preferred contact</li>
+    </ul>
+  </section>
+
+  <section class="terminal-block" aria-labelledby="links-heading">
+    <p id="links-heading" class="terminal-prompt">links</p>
+    <p>
+      <a href="https://scholar.google.com/citations?user=BsDK7zIAAAAJ&hl=en" rel="external nofollow noopener" target="_blank">scholar</a>
+      /
+      <a href="https://github.com/yurakuratov" rel="external nofollow noopener" target="_blank">github</a>
+      /
+      <a href="https://x.com/yurakuratov" rel="external nofollow noopener" target="_blank">x</a>
+      /
+      <button id="copy-email-link" class="terminal-link" type="button">email</button>
+    </p>
+  </section>
+</main>
+
+<script>
+  (() => {
+    const emailNode = document.getElementById("canonical-email");
+    const copyButtons = [document.getElementById("copy-email"), document.getElementById("copy-email-link")].filter(Boolean);
+
+    if (!emailNode || copyButtons.length === 0) return;
+
+    const email = `${emailNode.dataset.user}@${emailNode.dataset.domain}.${emailNode.dataset.tld}`;
+
+    copyButtons.forEach((button) => {
+      button.addEventListener("click", async () => {
+        try {
+          await navigator.clipboard.writeText(email);
+          const original = button.textContent;
+          button.textContent = "copied";
+          window.setTimeout(() => {
+            button.textContent = original;
+          }, 1600);
+        } catch {
+          window.location.hash = "contact";
+        }
+      });
+    });
+  })();
+</script>
