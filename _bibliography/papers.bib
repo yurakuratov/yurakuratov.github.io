@@ -17,6 +17,34 @@
  code = {https://github.com/booydar/recurrent-memory-transformer}
 }
 
+@inproceedings{chepurova-etal-2024-prompt,
+  bibtex_show = {true},
+  title = "Prompt Me One More Time: A Two-Step Knowledge Extraction Pipeline with Ontology-Based Verification",
+  author = "Chepurova, Alla  and
+    Kuratov, Yuri  and
+    Bulatov, Aydar  and
+    Burtsev, Mikhail",
+  editor = "Ustalov, Dmitry  and
+    Gao, Yanjun  and
+    Panchenko, Alexander  and
+    Tutubalina, Elena  and
+    Nikishina, Irina  and
+    Ramesh, Arti  and
+    Sakhovskiy, Andrey  and
+    Usbeck, Ricardo  and
+    Penn, Gerald  and
+    Valentino, Marco",
+  booktitle = "Proceedings of TextGraphs-17: Graph-based Methods for Natural Language Processing",
+  month = aug,
+  year = "2024",
+  address = "Bangkok, Thailand",
+  publisher = "Association for Computational Linguistics",
+  url = "https://aclanthology.org/2024.textgraphs-1.5/",
+  pages = "61--77",
+  abstract = "This study explores a method for extending real-world knowledge graphs (specifically, Wikidata) by extracting triplets from texts with the aid of Large Language Models (LLMs). We propose a two-step pipeline that includes the initial extraction of entity candidates, followed by their refinement and linkage to the canonical entities and relations of the knowledge graph. Finally, we utilize Wikidata relation constraints to select only verified triplets. We compare our approach to a model that was fine-tuned on a machine-generated dataset and demonstrate that it performs better on natural data. Our results suggest that LLM-based triplet extraction from texts, with subsequent verification, is a viable method for real-world applications.",
+  pdf = "https://aclanthology.org/2024.textgraphs-1.5.pdf"
+}
+
 @article{bulatov2024beyond,
   bibtex_show = {true},
   title={Beyond Attention: Breaking the Limits of Transformer Context Length with Recurrent Memory},
@@ -30,6 +58,17 @@
   month={Mar.},
   pages={17700–17708},
   code = {https://github.com/booydar/recurrent-memory-transformer}
+}
+
+@inproceedings{rodkin2024associative,
+  bibtex_show = {true},
+  title={Associative Recurrent Memory Transformer},
+  author={Rodkin, Ivan and Kuratov, Yuri and Bulatov, Aydar and Burtsev, Mikhail},
+  booktitle={Next Generation of Sequence Modeling Architectures Workshop at ICML 2024},
+  year={2024},
+  arxiv={2407.04841},
+  pdf = {https://arxiv.org/pdf/2407.04841},
+  code = {https://github.com/RodkinIvan/associative-recurrent-memory-transformer}
 }
 
 @inproceedings{kuratov2024babilong,
@@ -47,6 +86,25 @@
   pdf = {https://proceedings.neurips.cc/paper_files/paper/2024/file/c0d62e70dbc659cc9bd44cbcf1cb652f-Paper-Datasets_and_Benchmarks_Track.pdf},
   code = {https://github.com/booydar/babilong},
   website = {https://huggingface.co/spaces/RMT-team/babilong}
+}
+
+@article{fishman2025genalm,
+    bibtex_show = {true},
+    author = {Fishman, Veniamin and Kuratov, Yuri and Shmelev, Aleksei and Petrov, Maxim and Penzar, Dmitry and Shepelin, Denis and Chekanov, Nikolay and Kardymon, Olga and Burtsev, Mikhail},
+    title = {GENA-LM: a family of open-source foundational DNA language models for long sequences},
+    journal = {Nucleic Acids Research},
+    volume = {53},
+    number = {2},
+    pages = {gkae1310},
+    year = {2025},
+    month = {01},
+    abstract = {Recent advancements in genomics, propelled by artificial intelligence, have unlocked unprecedented capabilities in interpreting genomic sequences, mitigating the need for exhaustive experimental analysis of complex, intertwined molecular processes inherent in DNA function. A significant challenge, however, resides in accurately decoding genomic sequences, which inherently involves comprehending rich contextual information dispersed across thousands of nucleotides. To address this need, we introduce GENA language model (GENA-LM), a suite of transformer-based foundational DNA language models capable of handling input lengths up to 36 000 base pairs. Notably, integrating the newly developed recurrent memory mechanism allows these models to process even larger DNA segments. We provide pre-trained versions of GENA-LM, including multispecies and taxon-specific models, demonstrating their capability for fine-tuning and addressing a spectrum of complex biological tasks with modest computational demands. While language models have already achieved significant breakthroughs in protein biology, GENA-LM showcases a similarly promising potential for reshaping the landscape of genomics and multi-omics data analysis. All models are publicly available on GitHub (https://github.com/AIRI-Institute/GENA\_LM) and on HuggingFace (https://huggingface.co/AIRI-Institute). In addition, we provide a web service (https://dnalm.airi.net/) allowing user-friendly DNA annotation with GENA-LM models.},
+    issn = {1362-4962},
+    doi = {10.1093/nar/gkae1310},
+    url = {https://doi.org/10.1093/nar/gkae1310},
+    eprint = {https://academic.oup.com/nar/article-pdf/53/2/gkae1310/61737089/gkae1310.pdf},
+    code = {https://github.com/AIRI-Institute/GENA_LM},
+    pdf = {https://academic.oup.com/nar/article-pdf/53/2/gkae1310/61737089/gkae1310.pdf}
 }
 
 
@@ -70,6 +128,7 @@
     doi = "10.18653/v1/2025.acl-long.948",
     pages = "19323--19339",
     ISBN = "979-8-89176-251-0",
+    abstract = "A range of recent works addresses the problem of compression of sequence of tokens into a shorter sequence of real-valued vectors to be used as inputs instead of token embeddings or key-value cache. These approaches are focused on reduction of the amount of compute in existing language models rather than minimization of number of bits needed to store text. Despite relying on powerful models as encoders, the maximum attainable lossless compression ratio is typically not higher than x10. This fact is highly intriguing because, in theory, the maximum information capacity of large real-valued vectors is far beyond the presented rates even for 16-bit precision and a modest vector size. In this work, we explore the limits of compression by replacing the encoder with a per-sample optimization procedure. We show that vectors with compression ratios up to x1500 exist, which highlights two orders of magnitude gap between existing and practically attainable solutions. Furthermore, we empirically show that the compression limits are determined not by the length of the input but by the amount of uncertainty to be reduced, namely, the cross-entropy loss on this sequence without any conditioning. The obtained limits highlight the substantial gap between the theoretical capacity of input embeddings and their practical utilization, suggesting significant room for optimization in model design.",
     pdf = "https://aclanthology.org/2025.acl-long.948.pdf",
     code= "https://github.com/yurakuratov/hidden_capacity"
 }
@@ -93,6 +152,7 @@
     doi = "10.18653/v1/2026.eacl-long.388",
     pages = "8304--8319",
     ISBN = "979-8-89176-380-7",
+    abstract = "Knowledge graphs (KGs) provide structured, verifiable grounding for large language models (LLMs), but current LLM-based systems commonly use KGs as auxiliary structures for text retrieval, leaving their intrinsic quality underexplored.In this work, we propose \textit{Wikontic}, a multi-stage pipeline that constructs KGs from open-domain texts by extracting candidate triplets with qualifiers, enforcing Wikidata-based type and relation constraints, and normalizing entities to reduce duplication.The resulting KGs are compact, ontology-consistent, and well-connected; on MuSiQue, the correct answer entity appears in 96{\%} of generated triplets.On HotpotQA, our triplets-only setup achieves 76.0 F1, and on MuSiQue 59.8 F1, matching or surpassing several retrieval-augmented generation baselines that still require textual context. In addition, Wikontic attains state-of-the-art information-retention performance on the MINE-1 benchmark (86{\%}), outperforming prior KG construction methods.Wikontic is also efficient at build time: KG construction uses less than 1,000 output tokens, about 3$\times$ fewer than AriGraph and $<$1/20 of GraphRAG.The proposed pipeline improves the quality of the generated KG and offers a scalable solution for leveraging structured knowledge in LLMs. Wikontic is available at https://github.com/screemix/Wikontic.",
     pdf = "https://aclanthology.org/2026.eacl-long.388.pdf",
     code={https://github.com/screemix/Wikontic},
 }

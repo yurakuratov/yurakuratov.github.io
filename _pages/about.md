@@ -131,8 +131,11 @@ description: Compact contact page.
     <div>
       <h1>Yura Kuratov</h1>
       <p>deep learning researcher / memory-augmented models</p>
-      <p class="muted">I work on new memory-augmented neural architectures to overcome key transformer limitations in long-context processing, number of sequential operations, test-time adaptation, and compact memory representations.
-      I also study how these ideas connect to external memory for LLMs, including RAG and knowledge graphs.</p>
+      <p class="muted">
+      I work on memory-augmented neural architectures to address limitations of transformer-based models in long-context processing, sequential computation, and test-time adaptation, while also making memory representations more compact.
+      My research also covers external memory for LLMs, including retrieval-augmented generation and knowledge graphs.
+      My broader research interests include genomic language models, where long sequences, biological structure, and complex data call for new modeling approaches.
+      </p>
     </div>
   </div>
 
