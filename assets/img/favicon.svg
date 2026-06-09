@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="YK">
+  <rect width="512" height="512" rx="72" fill="#f8f9fa"/>
+  <rect x="40" y="40" width="432" height="432" rx="48" fill="none" stroke="#212529" stroke-width="28"/>
+  <text
+    x="256"
+    y="280"
+    fill="#212529"
+    font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace"
+    font-size="256"
+    font-weight="600"
+    letter-spacing="-6"
+    text-anchor="middle"
+    dominant-baseline="middle"
+  >YK</text>
+</svg>

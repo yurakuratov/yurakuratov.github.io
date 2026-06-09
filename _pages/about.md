@@ -124,7 +124,6 @@ description: Compact contact page.
 </style>
 
 <main class="terminal-home" aria-label="Yura Kuratov home">
-  <!-- <p class="muted">yura@research:~$ whoami</p> -->
 
   <div class="terminal-intro">
     <div class="terminal-photo" role="img" aria-label="Yura Kuratov"></div>
@@ -163,7 +162,6 @@ description: Compact contact page.
         <span id="canonical-email" data-user="yurakuratov" data-domain="gmail" data-tld="com">yurakuratov [at] gmail [dot] com</span>
         <button id="copy-email" class="terminal-copy" type="button">copy</button>
       </li>
-      <li class="muted">preferred contact</li>
     </ul>
   </section>
 
