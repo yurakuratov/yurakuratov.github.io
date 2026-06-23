@@ -95,8 +95,21 @@ The pipeline extracts candidate `(subject, relation, object)` triplets, refines 
 - On MINE-1, it reaches 86% information retention.
 - KG construction uses about 3x fewer tokens than AriGraph and under 1/20 of GraphRAG.
 
+## Wikontic For Complex QA Data Generation
+
+Wikontic's KGs are also useful as an intermediate representation for generating complex QA datasets and synthetic data.
+
+- **Benchmarking:** DRAGOn {% cite chernogorskii2026dragon --file wikontic_references %} builds RAG benchmarks over periodically updated corpora. Its generation pipeline extracts KGs from text and samples graph structures to create QA pairs with different complexity levels.
+- **Training:** OCC-RAG {% cite savkin2026occrag --file wikontic_references %} uses Wikontic KGs as one component of its synthetic data generation pipeline for multi-context, multi-hop QA. The resulting training data substantially improves compact Qwen3 models: on HotpotQA, In-Acc rises from 34.8 to 57.6 for 0.6B, and from 47.7 to 60.9 for 1.7B.
+
 ## Citation
 
 <div class="publications">
-{% bibliography --cited_in_order --file papers --group_by none %}
+{% bibliography --file papers --query @*[doi=10.18653/v1/2026.eacl-long.388] --group_by none %}
+</div>
+
+## References
+
+<div class="publications">
+{% bibliography --cited_in_order --file wikontic_references --group_by none %}
 </div>
