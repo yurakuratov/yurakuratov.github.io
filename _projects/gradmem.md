@@ -252,8 +252,7 @@ $$
 f_\theta(Y \mid \hat{\mathcal{M}}, Q).
 $$
 
-<img src="{{ '/assets/img/gradmem/gradmem-main-figure.png' | relative_url }}" alt="GradMem WRITE and READ phases, including meta-learning, memory adaptation, and task prediction
-from memory and query." class="img-fluid rounded z-depth-1">
+<img src="{{ '/assets/img/gradmem/gradmem-main-figure.png' | relative_url }}" alt="GradMem WRITE and READ phases, including meta-learning, memory adaptation, and task prediction from memory and query." class="img-fluid d-block mx-auto rounded z-depth-1" style="width: 100%;">
 
 During training, we backpropagate through the WRITE updates. This trains the shared initialization $\mathcal{M}_0$ and model parameters $\theta$ so that a few gradient steps produce memory states that are useful for READ. We use the full second-order meta-gradient through the inner optimization loop.
 
