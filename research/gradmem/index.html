@@ -1,0 +1,250 @@
+<!DOCTYPE html> <html lang="en"> <head> <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"> <meta http-equiv="X-UA-Compatible" content="IE=edge"> <title> GradMem: Learning to Write Context into Memory with Test-Time Gradient Descent | Yura Kuratov </title> <meta name="author" content="Yura Kuratov"> <meta name="description" content="A meta-learned memory mechanism for writing context with a few test-time gradient steps."> <meta name="keywords" content="deep learning, neural architectures, memory, memory-augmented models, language models, long context"> <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' data: https:; media-src 'self' https:; frame-src 'self' https:; connect-src 'self' https:;"> <style>
+  :root {
+    --max-content-width: 930px;
+  }
+</style> <link rel="stylesheet" href="/assets/css/tailwind.css?v=50c64c15cbb9fd1ce6056fdb8bcb4b62"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.css" integrity="sha256-zTN0r+0OKaIv2xqeNNIYxNk0pWJ6+IqPGc1iDgVzWF0=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha256-MVopmdyC2tYTiJ8wlktf0uh0v4NgT+vNdyVFepi7Q0c=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/academicons@1.9.5/css/academicons.min.css" integrity="sha256-SzrCOBJbGVFMahewkgjwnApaV2+av1DwMAA+/QGLyZw=" crossorigin="anonymous"> <link defer rel="stylesheet" href="https://cdn.jsdelivr.net/npm/scholar-icons@1.0.3/css/scholar-icons.css" integrity="sha256-VY3hHVj/hNX3fYG6wtbA6TcKJQl7+FthzGSyIB64klY=" crossorigin="anonymous"> <link defer rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Roboto+Slab:100,300,400,500,700|Material+Icons&amp;display=swap"> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-github.css?v=591dab5a4e56573bf4ef7fd332894c99" media="" id="highlight_theme_light"> <link rel="shortcut icon" href="/assets/img/favicon.svg?v=8020a69231b6e8e755f9bae6902aa1db"> <link rel="stylesheet" href="/assets/css/main.css?v=9278fad11fbb7f97e25b00cf0f4948af"> <link rel="canonical" href="https://yurakuratov.github.io/research/gradmem/"> <script src="/assets/js/theme.js?v=7af685e2ba20b37fef545c97b8064050"></script> <link defer rel="stylesheet" href="/assets/css/jekyll-pygments-themes-native.css?v=5847e5ed4a4568527aa6cfab446049ca" media="none" id="highlight_theme_dark"> <script>
+    initTheme();
+  </script> </head> <body class="fixed-top-nav "> <header> <nav id="navbar" class="navbar navbar-light navbar-expand-sm fixed-top" role="navigation"> <div class="container"> <a class="navbar-brand title font-weight-lighter" href="/"> Yura Kuratov </a> <button class="navbar-toggler collapsed navbar-toggler-main" type="button" data-nav-toggle="navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="sr-only">Toggle navigation</span> <span class="icon-bar top-bar"></span> <span class="icon-bar middle-bar"></span> <span class="icon-bar bottom-bar"></span> </button> <div class="collapse navbar-collapse navbar-collapse-main" id="navbarNav"> <ul class="navbar-nav navbar-menu-list flex-nowrap"> <li class="nav-item "> <a class="nav-link" href="/">Yura Kuratov </a> </li> <li class="nav-item "> <a class="nav-link" href="/publications/">publications </a> </li> <li class="nav-item active"> <a class="nav-link" href="/research/">research <span class="sr-only">(current)</span> </a> </li> <li class="nav-item"> <button id="search-toggle" type="button" title="Search" aria-label="Open search"> <span class="nav-link">ctrl k <i class="fa-solid fa-magnifying-glass"></i></span> </button> </li> <li class="toggle-container"> <button id="light-toggle" type="button" title="Change theme" aria-label="Change color theme"> <i class="fa-half-sun-moon" id="light-toggle-system"></i> <i class="fa-solid fa-moon" id="light-toggle-dark"></i> <i class="fa-solid fa-sun" id="light-toggle-light"></i> </button> </li> </ul> </div> </div> </nav> <progress id="progress" value="0"> <div class="progress-container"> <span class="progress-bar"></span> </div> </progress> </header> <div class="container mt-5" role="main"> <div class="row"> <div class="col-sm-3"> <nav id="toc-sidebar" class="sticky-top toc toc-sidebar" aria-label="Table of contents" data-toc-collapse="expanded" data-toc-collapse-depth="6"></nav> </div> <div class="col-sm-9"> <style type="text/css">
+    @media (min-width: 768px) {
+  .container[role="main"] > .row {
+    align-items: stretch;
+  }
+
+  .container[role="main"] > .row > .col-sm-3:first-child {
+    flex: 0 0 185px;
+    max-width: 185px;
+    padding-right: 1.25rem;
+  }
+
+  .container[role="main"] > .row > .col-sm-9:last-child {
+    flex: 1 1 0;
+    max-width: calc(100% - 185px);
+  }
+}
+
+#toc-sidebar {
+  top: 5.75rem;
+  max-height: calc(100vh - 7rem);
+  overflow-y: auto;
+  padding: 0.2rem 0 0.5rem 0.95rem;
+  border-left: 1px solid var(--global-divider-color);
+}
+
+#toc-sidebar::before {
+  content: "Contents";
+  display: block;
+  margin-bottom: 0.55rem;
+  color: var(--global-text-color-light);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+#toc-sidebar.toc > .toc-list,
+#toc-sidebar .toc-list {
+  padding-left: 0;
+}
+
+#toc-sidebar .toc-list .toc-list {
+  margin-top: 0.16rem;
+  padding-left: 0.75rem;
+}
+
+#toc-sidebar .toc-list-item {
+  margin: 0.08rem 0;
+}
+
+#toc-sidebar .toc-link {
+  color: var(--global-text-color-light);
+  font-size: 0.78rem;
+  line-height: 1.35;
+  padding: 0.12rem 0 0.12rem 0.45rem;
+}
+
+#toc-sidebar .toc-link:hover {
+  color: var(--global-hover-color);
+}
+
+#toc-sidebar .toc-link.is-active-link {
+  color: var(--global-theme-color);
+  font-weight: 600;
+}
+
+#toc-sidebar .toc-list-item:has(> .toc-link[href="#references"]) {
+  display: none;
+}
+
+.paper-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.15rem;
+  margin: 0.25rem 0 1.35rem;
+}
+
+.paper-links a {
+  border-bottom: 1px solid var(--global-divider-color);
+  color: var(--global-theme-color);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-decoration: none;
+}
+
+.paper-links a:hover {
+  border-bottom-color: var(--global-hover-color);
+  color: var(--global-hover-color);
+  text-decoration: none;
+}
+
+.paper-meta {
+  margin: -0.55rem 0 1.35rem;
+  color: var(--global-text-color-light);
+  line-height: 1.45;
+}
+
+.paper-authors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem 0.45rem;
+  font-size: 0.98rem;
+}
+
+.paper-author-note {
+  margin-top: 0.25rem;
+  font-size: 0.86rem;
+}
+
+.paper-venue {
+  margin-top: 0.25rem;
+  color: var(--global-text-color);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+@media (max-width: 767.98px) {
+  .container[role="main"] > .row > .col-sm-3:first-child {
+    display: none;
+  }
+
+  .container[role="main"] > .row > .col-sm-9:last-child {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  #toc-sidebar {
+    display: none;
+  }
+}
+
+  </style> <div class="post"> <header class="post-header"> <h1 class="post-title">GradMem: Learning to Write Context into Memory with Test-Time Gradient Descent</h1> <p class="post-description">A meta-learned memory mechanism for writing context with a few test-time gradient steps.</p> </header> <article> <div class="paper-meta"> <div class="paper-authors" aria-label="Paper authors"> <span>Yuri Kuratov</span><span aria-hidden="true">·</span> <span>Matvey Kairov</span><span aria-hidden="true">·</span> <span>Aydar Bulatov</span><span aria-hidden="true">·</span> <span>Ivan Rodkin</span><span aria-hidden="true">·</span> <span>Mikhail Burtsev</span> </div> <div class="paper-venue">ICML 2026</div> </div> <div class="paper-links"> <a href="https://arxiv.org/abs/2603.13875" rel="external nofollow noopener" target="_blank">Paper</a> <a href="https://github.com/yurakuratov/gradmem" rel="external nofollow noopener" target="_blank">Code</a> </div> <p>GradMem is a memory mechanism for language models that writes context into a small set of memory tokens by running a few gradient-descent steps at test time.</p> <p>Instead of compressing context with a single forward pass, GradMem optimizes the memory itself with a reconstruction loss and trains the model to read from that gradient-written memory.</p> <p><img src="/assets/img/gradmem/gradmem-overview-short.png" alt="GradMem overview: context is compressed into memory with test-time training and then read by the language model with a query." class="img-fluid d-block mx-auto rounded z-depth-1" style="width: 90%;"></p> <h2 id="tldr">TL;DR</h2> <ul> <li>WRITE: optimize only the memory tokens (prefix vectors) for the current context; model weights stay frozen.</li> <li>READ: remove the original context and answer from the optimized memory plus a query.</li> <li>GradMem trains the model to use gradient descent as the WRITE operation: the reconstruction loss gives direct feedback on how good the memory state is.</li> <li>Training backpropagates through the inner WRITE loop, so a few gradient steps become useful.</li> <li>More WRITE steps trade extra test-time compute for higher memory capacity.</li> </ul> <h2 id="gradients-write-more-into-the-same-memory">Gradients Write More Into The Same Memory</h2> <p>The cleanest experiment is associative key-value retrieval. The context contains key-value pairs, the query gives a key, and the model must return the value. During READ, the original context is removed, so the answer must come from memory.</p> <p>GradMem and the forward-only RMT baseline use the same base architecture (4-layer, 128-dim transformer) and the same memory size: 8 memory vectors. The main difference is the WRITE rule: RMT writes memory with forward passes, while GradMem writes memory with gradient descent.</p> <p><img src="/assets/img/gradmem/gradmem-kv-retrieval.png" alt="Associative key-value retrieval results comparing GradMem, forward-only RMT, Mamba, ARMT, and Transformer upper bound." class="img-fluid d-block mx-auto rounded z-depth-1" style="width: 90%;"></p> <p>With the same 8-vector memory, GradMem retrieves 16 key-value pairs with 95% accuracy, while the forward-only write rule stores only about 8 pairs at high accuracy. This is the main result: gradient descent writes substantially more information into the same memory state.</p> <p>The second result is that more WRITE steps help. With additional gradient steps, the same 8-vector memory reaches 88% retrieval accuracy at 96 key-value pairs.</p> <p>So, optimization-based WRITE operation into memory gave a scalable way to spend extra test-time compute: the reconstruction loss tells the model what is still missing from memory, and each gradient step can refine the memory state.</p> <h2 id="test-time-scaling">Test-Time Scaling</h2> <p>The next important result is extrapolation in the number of WRITE steps. GradMem can be trained with a small number of WRITE steps, then run with more WRITE steps at inference time while keeping model parameters fixed.</p> <p><img src="/assets/img/gradmem/gradmem-kv-extrapolation.png" alt="GradMem test-time scaling on KV retrieval: increasing evaluation WRITE steps improves exact-match accuracy with fixed model parameters." class="img-fluid d-block mx-auto rounded z-depth-1" style="width: 75%;"></p> <p>On 32 key-value pairs, a model trained with one WRITE step improves from 86.9% exact match at one evaluation step to 98.3% with more inference-time WRITE refinement. On 64 pairs, a model trained with two WRITE steps improves from 31.8% at one evaluation step to 93.9%. On 96 pairs, the same idea pushes accuracy from 8.6% at one step to 95.8%.</p> <h2 id="how-gradmem-works">How GradMem Works</h2> <p>GradMem splits each example into a context $C$, a query $Q$, and a target $Y$. The goal is to answer from $Q$ after the original context has been removed, using only a compact memory state.</p> <p>Memory is represented as $m$ prefix vectors:</p> \[\mathcal{M} \in \mathbb{R}^{m \times d}.\] <p>In the WRITE phase, GradMem starts from a meta-learned initialization $\mathcal{M}_0$. Model weights stay frozen, and only the memory tokens are updated for the current context.</p> <p>The WRITE objective is context reconstruction, for each token $t \in C$:</p> \[\mathcal{L}_{\text{write}}(\mathcal{M}; C) = -\sum_{i=1}^{N} \log f_\theta(t_i \mid [\mathcal{M}; t_{&lt;i}]).\] <p>Then memory is updated by gradient descent:</p> \[\mathcal{M}_{k+1} = \mathcal{M}_k - \alpha \nabla_{\mathcal{M}_k} \mathcal{L}_{\text{write}}(\mathcal{M}_k; C).\] <p>After $K$ WRITE steps, the final memory is</p> \[\hat{\mathcal{M}} = \mathcal{M}_K.\] <p>In the READ phase, the original context is removed. The model receives only the optimized memory and the query:</p> \[f_\theta(Y \mid \hat{\mathcal{M}}, Q).\] <p><img src="/assets/img/gradmem/gradmem-main-figure.png" alt="GradMem WRITE and READ phases, including meta-learning, memory adaptation, and task prediction from memory and query." class="img-fluid rounded z-depth-1"></p> <p>During training, we backpropagate through the WRITE updates. This trains the shared initialization $\mathcal{M}_0$ and model parameters $\theta$ so that a few gradient steps produce memory states that are useful for READ. We use the full second-order meta-gradient through the inner optimization loop.</p> <h2 id="where-gradmem-came-from">Where GradMem Came From</h2> <p>GradMem grew out of a limitation that bothered me after our earlier paper, <a href="https://aclanthology.org/2025.acl-long.948/" rel="external nofollow noopener" target="_blank">Cramming 1568 Tokens into a Single Vector and Back Again</a>, (<a class="citation" href="#kuratov2025cramming">Kuratov et al., 2025</a>).</p> <p>In that work, we optimized input vectors with gradient descent and showed something surprising: a single vector can store a huge amount of text. For a Llama-8B model, we could cram about 1500 tokens into one optimized vector and reconstruct the text back from it.</p> <p>However, these vectors were optimized for token-by-token reconstruction. The LM was not trained to treat them as drop-in context representations for downstream questions or prompts. In practice, the model could decode the original text, but it could not use the vector as a real replacement for the text it represented.</p> <p>GradMem follows directly from this limitation:</p> <blockquote> <p>If we want the model to use optimized vectors as memory, we should train it to use them. No magic should be expected.</p> </blockquote> <p>The idea is to take the Cramming procedure and turn it into a WRITE operation. At test time, we optimize memory tokens with a reconstruction loss. During training, the model learns to READ from memory written this way.</p> <p>This was the part I expected to be fragile. Meta-learning through an inner optimization loop is often tricky, and I did not initially believe the first experiments would work as well as they did. But the gradient-written memory converged much faster than my forward-only baseline, which behaved like a context encoder: read the context once, emit memory, and hope that memory is good enough.</p> <h2 id="why-gradients-help">Why Gradients Help</h2> <p>Forward-only encoders have no direct signal at test time that says what they failed to encode. Once the memory is emitted, the write operation is over. Gradients give feedback from an explicit loss. If the current memory does not explain some part of the context, the loss tells the write operation where memory is still missing information.</p> <p>That creates a useful compute-capacity tradeoff. With a fixed memory size, we can run more WRITE steps to refine the memory. The memory initialization and model are meta-learned so a few steps are useful, and extra steps can improve capacity further.</p> <h2 id="relation-to-test-time-training">Relation To Test-Time Training</h2> <details style="margin-bottom: 2rem;"> <summary>Show discussion</summary> <p>GradMem is related to test-time training (TTT) because it also performs optimization at inference time. The closest starting point is <a href="https://proceedings.mlr.press/v267/sun25h.html" rel="external nofollow noopener" target="_blank">Learning to (Learn at Test Time): RNNs with Expressive Hidden States</a> (<a class="citation" href="#sun2025l2l">Sun et al., 2025</a>), which updates sequence-dependent hidden state with self-supervised objectives while processing tokens.</p> <p>Several recent works push this idea toward long-context modeling and memory. <a href="https://arxiv.org/abs/2501.00663" rel="external nofollow noopener" target="_blank">Titans</a> and <a href="https://arxiv.org/abs/2505.23735" rel="external nofollow noopener" target="_blank">ATLAS</a> learn neural memory modules that memorize at test time with update rules that resemble one optimization step (<a class="citation" href="#behrouz2025titans">Behrouz et al., 2025</a>; <a class="citation" href="#behrouz2025atlas">Behrouz et al., 2025</a>). Nested Learning frames architectures as nested optimization processes (<a class="citation" href="#behrouz2025nested">Behrouz et al., 2025</a>). End-to-end TTT for long context and <a href="https://openreview.net/forum?id=Tb9qAxT3xv" rel="external nofollow noopener" target="_blank">LaCT / Test-Time Training Done Right</a> also adapt sequence-dependent state during inference (<a class="citation" href="#tandon2025end">Tandon et al., 2025</a>; <a class="citation" href="#zhang2026lact">Zhang et al., 2026</a>).</p> <p>GradMem belongs to this family, but uses a different interface. TTT-style methods usually maintain layer-local fast states or neural-memory modules and update them online while processing tokens or chunks. Their self-supervised losses are often local: reconstructing layer inputs, hidden activations, or other internal views.</p> <p>GradMem instead performs a dedicated WRITE phase once per context. The writable state is a single input-level memory: <code class="language-plaintext highlighter-rouge">m</code> prefix vectors. We optimize these memory tokens directly with a model-level context-reconstruction loss, then READ from the optimized memory and query with the original context removed.</p> <p>This makes the memory budget explicit and easy to reason about. More importantly, GradMem makes the number of WRITE steps an explicit test-time compute knob. Prior TTT-style memory works mostly use update rules that correspond to a single learned optimization step or online local updates. In GradMem, we can run multiple gradient steps on the same memory state, and the experiments show that these extra steps actually improve memory quality and scale capacity.</p> </details> <h2 id="what-still-feels-open">What Still Feels Open</h2> <p>The main engineering bottleneck is second-order training. GradMem backpropagates through the inner WRITE optimization loop, so training needs gradients through gradients. This is expensive, and it also breaks the usual fast-attention path: FlashAttention and PyTorch SDPA are designed for efficient first-order training, and do not support the double backward we need here.</p> <p>We ended up <a href="https://github.com/yurakuratov/gradmem/tree/main/attn_double_bwd" rel="external nofollow noopener" target="_blank">implementing</a> custom double-backward attention operations to make the experiments practical. In the paper, this roughly reduced attention backward time from about 1000 ms to 600 ms and peak GPU memory from about 60 GB to 30 GB in our setup. That made the work possible, but it also makes the next question obvious: can we keep most of the benefit while avoiding full second-order training?</p> <p>I also do not think reconstruction is the final WRITE objective. It is a good starting point because it is self-supervised, task-agnostic, and simple. But the model does not necessarily need to preserve every token equally. For question answering or retrieval, a better objective might encourage memory to preserve the information that will be useful later, not just the information that is easy to reconstruct.</p> <p>Another question I keep thinking about is how to scale WRITE to very long inputs. In the current setup, we compress one context into one memory state. For longer streams, we probably need something more compositional: write chunks in parallel or sequentially, merge the resulting memories, and maybe allow the same memory state to be rewritten as more context arrives. This feels important if memory is supposed to be a working state, not just a one-shot compressed representation. This also makes training harder. GradMem already backpropagates through the WRITE steps; if memory is updated across sequential chunks, training may also need to backpropagate through the chunk-to-chunk memory trajectory.</p> <p>Memory also does not have to mean only input-level memory tokens. It could live in adapters, hidden states, KV-cache-like states, or some other memory state. But memory tokens have a very useful property: they are just prefix vectors, so they do not require changing transformer internals. If we move beyond memory tokens, I would want a memory form with similar simplicity: easy to attach to an existing LM and easy to optimize at test time.</p> <h2 id="takeaway">Takeaway</h2> <p>GradMem suggests a broader direction: memory for LMs can be an optimized state, not just something produced by a single forward pass.</p> <p>The current version uses memory tokens because they are simple and do not modify transformer internals. The next question is how far this idea can scale: better WRITE objectives, cheaper training, and memory forms that stay easy to attach to existing pretrained models.</p> <h2 id="resources">Resources</h2> <ul> <li>Paper: <a href="https://arxiv.org/abs/2603.13875" rel="external nofollow noopener" target="_blank">arXiv:2603.13875</a> </li> <li>Code: <a href="https://github.com/yurakuratov/gradmem" rel="external nofollow noopener" target="_blank">github.com/yurakuratov/gradmem</a> </li> <li>X thread: <a href="https://x.com/yurakuratov/status/2034989528818098615" rel="external nofollow noopener" target="_blank">x.com/yurakuratov/status/2034989528818098615</a> </li> </ul> <h2 id="citation">Citation</h2> <div class="publications"> <ol class="bibliography"><li> <div class="row"> <div id="kuratov2026gradmem" class="col-sm-10"> <div class="title">GradMem: Learning to Write Context into Memory with Test-Time Gradient Descent</div> <div class="author"> Yuri Kuratov, Matvey Kairov, Aydar Bulatov, Ivan Rodkin, and Mikhail Burtsev </div> <div class="periodical"> 2026 </div> <div class="periodical"> </div> <div class="links"> <a href="http://arxiv.org/abs/2603.13875" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">arXiv</a> <a class="bibtex btn btn-sm z-depth-0" role="button">Bib</a> <a href="https://arxiv.org/pdf/2603.13875" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">PDF</a> <a href="https://github.com/yurakuratov/gradmem" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">Code</a> <a href="/research/gradmem/" class="btn btn-sm z-depth-0" role="button">Website</a> </div> <div class="bibtex hidden"> <figure class="highlight"><pre><code class="language-bibtex" data-lang="bibtex"><span class="nc">@misc</span><span class="p">{</span><span class="nl">kuratov2026gradmem</span><span class="p">,</span>
+  <span class="na">title</span> <span class="p">=</span> <span class="s">{GradMem: Learning to Write Context into Memory with Test-Time Gradient Descent}</span><span class="p">,</span>
+  <span class="na">author</span> <span class="p">=</span> <span class="s">{Kuratov, Yuri and Kairov, Matvey and Bulatov, Aydar and Rodkin, Ivan and Burtsev, Mikhail}</span><span class="p">,</span>
+  <span class="na">year</span> <span class="p">=</span> <span class="s">{2026}</span><span class="p">,</span>
+  <span class="na">archiveprefix</span> <span class="p">=</span> <span class="s">{arXiv}</span><span class="p">,</span>
+  <span class="na">primaryclass</span> <span class="p">=</span> <span class="s">{cs.CL}</span><span class="p">,</span>
+  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://arxiv.org/abs/2603.13875}</span><span class="p">,</span>
+<span class="p">}</span></code></pre></figure> </div> </div> </div> </li></ol> </div> <h2 id="references">References</h2> <div class="publications"> <ol class="bibliography"> <li> <div class="row"> <div id="kuratov2025cramming" class="col-sm-10"> <div class="title">Cramming 1568 Tokens into a Single Vector and Back Again: Exploring the Limits of Embedding Space Capacity</div> <div class="author"> Yuri Kuratov, Mikhail Arkhipov, Aydar Bulatov, and Mikhail Burtsev </div> <div class="periodical"> <em>In Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)</em>, Jul 2025 </div> <div class="periodical"> </div> <div class="links"> <a class="abstract btn btn-sm z-depth-0" role="button">Abs</a> <a href="https://doi.org/10.18653/v1/2025.acl-long.948" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">DOI</a> <a class="bibtex btn btn-sm z-depth-0" role="button">Bib</a> <a href="https://aclanthology.org/2025.acl-long.948.pdf" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">PDF</a> <a href="https://github.com/yurakuratov/hidden_capacity" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">Code</a> </div> <div class="abstract hidden"> <p>A range of recent works addresses the problem of compression of sequence of tokens into a shorter sequence of real-valued vectors to be used as inputs instead of token embeddings or key-value cache. These approaches are focused on reduction of the amount of compute in existing language models rather than minimization of number of bits needed to store text. Despite relying on powerful models as encoders, the maximum attainable lossless compression ratio is typically not higher than x10. This fact is highly intriguing because, in theory, the maximum information capacity of large real-valued vectors is far beyond the presented rates even for 16-bit precision and a modest vector size. In this work, we explore the limits of compression by replacing the encoder with a per-sample optimization procedure. We show that vectors with compression ratios up to x1500 exist, which highlights two orders of magnitude gap between existing and practically attainable solutions. Furthermore, we empirically show that the compression limits are determined not by the length of the input but by the amount of uncertainty to be reduced, namely, the cross-entropy loss on this sequence without any conditioning. The obtained limits highlight the substantial gap between the theoretical capacity of input embeddings and their practical utilization, suggesting significant room for optimization in model design.</p> </div> <div class="bibtex hidden"> <figure class="highlight"><pre><code class="language-bibtex" data-lang="bibtex"><span class="nc">@inproceedings</span><span class="p">{</span><span class="nl">kuratov2025cramming</span><span class="p">,</span>
+  <span class="na">title</span> <span class="p">=</span> <span class="s">{Cramming 1568 Tokens into a Single Vector and Back Again: Exploring the Limits of Embedding Space Capacity}</span><span class="p">,</span>
+  <span class="na">author</span> <span class="p">=</span> <span class="s">{Kuratov, Yuri and Arkhipov, Mikhail and Bulatov, Aydar and Burtsev, Mikhail}</span><span class="p">,</span>
+  <span class="na">editor</span> <span class="p">=</span> <span class="s">{Che, Wanxiang and Nabende, Joyce and Shutova, Ekaterina and Pilehvar, Mohammad Taher}</span><span class="p">,</span>
+  <span class="na">booktitle</span> <span class="p">=</span> <span class="s">{Proceedings of the 63rd Annual Meeting of the Association for Computational Linguistics (Volume 1: Long Papers)}</span><span class="p">,</span>
+  <span class="na">month</span> <span class="p">=</span> <span class="nv">jul</span><span class="p">,</span>
+  <span class="na">year</span> <span class="p">=</span> <span class="s">{2025}</span><span class="p">,</span>
+  <span class="na">address</span> <span class="p">=</span> <span class="s">{Vienna, Austria}</span><span class="p">,</span>
+  <span class="na">publisher</span> <span class="p">=</span> <span class="s">{Association for Computational Linguistics}</span><span class="p">,</span>
+  <span class="na">url</span> <span class="p">=</span> <span class="s">{https://aclanthology.org/2025.acl-long.948/}</span><span class="p">,</span>
+  <span class="na">doi</span> <span class="p">=</span> <span class="s">{10.18653/v1/2025.acl-long.948}</span><span class="p">,</span>
+  <span class="na">pages</span> <span class="p">=</span> <span class="s">{19323--19339}</span><span class="p">,</span>
+  <span class="na">isbn</span> <span class="p">=</span> <span class="s">{979-8-89176-251-0}</span><span class="p">,</span>
+<span class="p">}</span></code></pre></figure> </div> </div> </div> </li> <li> <div class="row"> <div id="sun2025l2l" class="col-sm-10"> <div class="title">Learning to (Learn at Test Time): RNNs with Expressive Hidden States</div> <div class="author"> Yu Sun, Xinhao Li, Karan Dalal, Jiarui Xu, Arjun Vikram, Genghan Zhang, Yann Dubois, Xinlei Chen, Xiaolong Wang, Sanmi Koyejo, and <span class="more-authors" title="click to view 2 more authors" onclick=" var element=this; element.setAttribute('title', ''); var more_authors_text=element.textContent == '2 more authors' ? 'Tatsunori Hashimoto, Carlos Guestrin' : '2 more authors'; var cursorPosition=0; var textAdder=setInterval(function(){ element.innerHTML = more_authors_text.substring(0, cursorPosition + 1); if (++cursorPosition == more_authors_text.length){ clearInterval(textAdder); } }, '10'); ">2 more authors</span> </div> <div class="periodical"> <em>In Proceedings of the 42nd International Conference on Machine Learning</em>, 13–19 jul 2025 </div> <div class="periodical"> </div> <div class="links"> <a href="https://raw.githubusercontent.com/mlresearch/v267/main/assets/sun25h/sun25h.pdf" class="btn btn-sm z-depth-0" role="button" rel="external nofollow noopener" target="_blank">PDF</a> </div> </div> </div> </li> <li> <div class="row"> <div id="behrouz2025titans" class="col-sm-10"> <div class="title">Titans: Learning to Memorize at Test Time</div> <div class="author"> Ali Behrouz, Peilin Zhong, and Vahab Mirrokni </div> <div class="periodical"> <em>In Advances in Neural Information Processing Systems</em>, 2025 </div> <div class="periodical"> </div> <div class="links"> </div> </div> </div> </li> <li> <div class="row"> <div id="behrouz2025atlas" class="col-sm-10"> <div class="title">Atlas: Learning to optimally memorize the context at test time</div> <div class="author"> Ali Behrouz, Zeman Li, Praneeth Kacham, Majid Daliri, Yuan Deng, Peilin Zhong, Meisam Razaviyayn, and Vahab Mirrokni </div> <div class="periodical"> <em>arXiv preprint arXiv:2505.23735</em>, 2025 </div> <div class="periodical"> </div> <div class="links"> </div> </div> </div> </li> <li> <div class="row"> <div id="behrouz2025nested" class="col-sm-10"> <div class="title">Nested Learning: The Illusion of Deep Learning Architectures</div> <div class="author"> Ali Behrouz, Meisam Razaviyayn, Peilin Zhong, and Vahab Mirrokni </div> <div class="periodical"> <em>In Advances in Neural Information Processing Systems</em>, 2025 </div> <div class="periodical"> </div> <div class="links"> </div> </div> </div> </li> <li> <div class="row"> <div id="tandon2025end" class="col-sm-10"> <div class="title">End-to-end test-time training for long context</div> <div class="author"> Arnuv Tandon, Karan Dalal, Xinhao Li, Daniel Koceja, Marcel Rød, Sam Buchanan, Xiaolong Wang, Jure Leskovec, Sanmi Koyejo, Tatsunori Hashimoto, and <span class="more-authors" title="click to view 1 more author" onclick=" var element=this; element.setAttribute('title', ''); var more_authors_text=element.textContent == '1 more author' ? ' others' : '1 more author'; var cursorPosition=0; var textAdder=setInterval(function(){ element.innerHTML = more_authors_text.substring(0, cursorPosition + 1); if (++cursorPosition == more_authors_text.length){ clearInterval(textAdder); } }, '10'); ">1 more author</span> </div> <div class="periodical"> <em>arXiv preprint arXiv:2512.23675</em>, 2025 </div> <div class="periodical"> </div> <div class="links"> </div> </div> </div> </li> <li> <div class="row"> <div id="zhang2026lact" class="col-sm-10"> <div class="title">Test-Time Training Done Right</div> <div class="author"> Tianyuan Zhang, Sai Bi, Yicong Hong, Kai Zhang, Fujun Luan, Songlin Yang, Kalyan Sunkavalli, William T. Freeman, and Hao Tan </div> <div class="periodical"> <em>In The Fourteenth International Conference on Learning Representations</em>, 2026 </div> <div class="periodical"> </div> <div class="links"> </div> </div> </div> </li> </ol> </div> </article> </div> </div> </div> </div> <script>
+  window.alFolio = {
+    compatBootstrap: false
+  };
+</script> <script src="/assets/js/nav-toggle.js?v=141bd79a73ebc0f0b6ea58e440ae79fc"></script> <script defer src="https://cdn.jsdelivr.net/npm/masonry-layout@4.2.2/dist/masonry.pkgd.min.js" integrity="sha256-Nn1q/fx0H7SNLZMQ5Hw5JLaTRZp0yILA/FRexe19VdI=" crossorigin="anonymous"></script> <script defer src="https://cdn.jsdelivr.net/npm/imagesloaded@5.0.0/imagesloaded.pkgd.min.js" integrity="sha256-htrLFfZJ6v5udOG+3kNLINIKh2gvoKqwEhHYfTTMICc=" crossorigin="anonymous"></script> <script defer src="/assets/js/masonry.js?v=e49affc7bd2646f6acdad1dbe02c2359" type="text/javascript"></script> <script defer type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script> <script src="/assets/al_math/js/mathjax-setup.js"></script> <script defer src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6" crossorigin="anonymous"></script> <script src="/assets/js/tooltips-setup.js?v=fe487e99db6c43751e6e7bdb2d6a0611"></script> <script defer src="https://cdn.jsdelivr.net/npm/tocbot@4.36.4/dist/tocbot.min.js" integrity="sha256-lo/r+jQ81wWrxdIiiiEEd538z4+dTJTt+leOuAS7GCw=" crossorigin="anonymous"></script> <script src="/assets/js/no_defer.js?v=53b1b1a645525975c963ce8bf8bfefcf"></script> <script defer src="/assets/js/common.js?v=87baac90f765f2f3362dcf6aaf312a8a"></script> <script defer src="/assets/js/copy_code.js?v=c8a01c11a92744d44b093fc3bda915df" type="text/javascript"></script> <script defer src="/assets/js/jupyter_new_tab.js?v=896d254890d9b47f0281f63bfccf0dee"></script> <script defer src="https://cdn.jsdelivr.net/npm/medium-zoom@1.1.0/dist/medium-zoom.min.js" integrity="sha256-ZgMyDAIYDYGxbcpJcfUnYwNevG/xi9OHKaR/8GK+jWc=" crossorigin="anonymous"></script> <script defer src="/assets/al_img_tools/js/zoom.js"></script> <script defer src="/assets/js/progress-bar.js?v=499464c5c63ced6cf7ad62509f1e2610" type="text/javascript"></script> <script src="https://cdn.jsdelivr.net/npm/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js" integrity="sha256-uMJJ3EoTyfRBoTbR+lrfu1uRQ87RZG8AR3cVNuQVeFg=" crossorigin="anonymous"></script> <script>
+    addBackToTop();
+  </script> <script type="module" src="/assets/al_search/js/search/ninja-keys.min.js"></script> <ninja-keys hidebreadcrumbs noautoloadmdicons placeholder="Type to start searching"></ninja-keys> <script src="/assets/al_search/js/search-setup.js"></script> <script>
+// get the ninja-keys element
+const ninja = document.querySelector('ninja-keys');
+
+// add the home and posts menu items
+ninja.data = [{
+    id: "nav-yura-kuratov",
+    title: "Yura Kuratov",
+    section: "Navigation",
+    handler: () => {
+      window.location.href = "/";
+    },
+  },{id: "nav-publications",
+          title: "publications",
+          description: "",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/publications/";
+          },
+        },{id: "nav-research",
+          title: "research",
+          description: "Selected research pages.",
+          section: "Navigation",
+          handler: () => {
+            window.location.href = "/research/";
+          },
+        },{id: "projects-gradmem-learning-to-write-context-into-memory-with-test-time-gradient-descent",
+          title: 'GradMem: Learning to Write Context into Memory with Test-Time Gradient Descent',
+          description: "A meta-learned memory mechanism for writing context with a few test-time gradient steps.",
+          section: "Projects",handler: () => {
+              window.location.href = "/research/gradmem/";
+            },},{id: "projects-wikontic-constructing-wikidata-aligned-ontology-aware-knowledge-graphs-with-large-language-models",
+          title: 'Wikontic: Constructing Wikidata-Aligned, Ontology-Aware Knowledge Graphs with Large Language Models',
+          description: "Building ontology-verified knowledge graphs from text using LLMs.",
+          section: "Projects",handler: () => {
+              window.location.href = "/research/wikontic/";
+            },},{
+        id: 'social-rss',
+        title: 'RSS Feed',
+        section: 'Socials',
+        handler: () => {
+          window.open("/feed.xml", "_blank");
+        },
+      },{
+        id: 'social-scholar',
+        title: 'Google Scholar',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://scholar.google.com/citations?user=", "_blank");
+        },
+      },{
+        id: 'social-github',
+        title: 'GitHub',
+        section: 'Socials',
+        handler: () => {
+          window.open("https://github.com/yurakuratov", "_blank");
+        },
+      },{
+      id: 'light-theme',
+      title: 'Change theme to light',
+      description: 'Change the theme of the site to Light',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("light");
+      },
+    },
+    {
+      id: 'dark-theme',
+      title: 'Change theme to dark',
+      description: 'Change the theme of the site to Dark',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("dark");
+      },
+    },
+    {
+      id: 'system-theme',
+      title: 'Use system default theme',
+      description: 'Change the theme of the site to System Default',
+      section: 'Theme',
+      handler: () => {
+        setThemeSetting("system");
+      },
+    },];
+
+</script> <script src="/assets/al_search/js/shortcut-key.js"></script> </body> </html>
