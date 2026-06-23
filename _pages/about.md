@@ -2,7 +2,7 @@
 layout: default
 title: Yura Kuratov
 permalink: /
-description: Compact contact page.
+description: Personal research website for Yura Kuratov, also known as Yuri, Yury, or Yurii Kuratov.
 ---
 
 <style>
@@ -178,6 +178,25 @@ description: Compact contact page.
     </p>
   </section>
 </main>
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": "{{ site.url }}{{ site.baseurl }}/#person",
+    "name": "Yura Kuratov",
+    "alternateName": ["Yuri Kuratov", "Yury Kuratov", "Yurii Kuratov"],
+    "givenName": "Yura",
+    "familyName": "Kuratov",
+    "url": "{{ site.url }}{{ site.baseurl }}/",
+    "image": "{{ site.url }}{{ site.baseurl }}/assets/img/yurakuratov.jpg",
+    "sameAs": [
+      "https://scholar.google.com/citations?user=BsDK7zIAAAAJ",
+      "https://github.com/yurakuratov",
+      "https://x.com/yurakuratov"
+    ]
+  }
+</script>
 
 <script>
   (() => {
