@@ -2,7 +2,7 @@
 layout: default
 permalink: /blog/
 title: blog
-nav: true
+nav: false
 published: false
 nav_order: 4
 pagination:
@@ -78,7 +78,17 @@ pagination:
 <p class="card-text">{{ post.description }}</p>
 
                     {% if post.external_source == blank %}
-                      {% assign read_time = post.content | number_of_words | divided_by: 180 | plus: 1 %}
+                      {% assign read_content = post.content %}
+                      {% assign redirect_url = post.redirect | default: "" %}
+                      {% if redirect_url != "" %}
+                        {% unless redirect_url contains "://" %}
+                          {% assign redirected_project = site.projects | where: "url", redirect_url | first %}
+                          {% if redirected_project %}
+                            {% assign read_content = redirected_project.content %}
+                          {% endif %}
+                        {% endunless %}
+                      {% endif %}
+                      {% assign read_time = read_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
                     {% else %}
                       {% assign read_time = post.feed_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
                     {% endif %}
@@ -113,7 +123,17 @@ pagination:
     {% for post in postlist %}
 
     {% if post.external_source == blank %}
-      {% assign read_time = post.content | number_of_words | divided_by: 180 | plus: 1 %}
+      {% assign read_content = post.content %}
+      {% assign redirect_url = post.redirect | default: "" %}
+      {% if redirect_url != "" %}
+        {% unless redirect_url contains "://" %}
+          {% assign redirected_project = site.projects | where: "url", redirect_url | first %}
+          {% if redirected_project %}
+            {% assign read_content = redirected_project.content %}
+          {% endif %}
+        {% endunless %}
+      {% endif %}
+      {% assign read_time = read_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
     {% else %}
       {% assign read_time = post.feed_content | strip_html | number_of_words | divided_by: 180 | plus: 1 %}
     {% endif %}

@@ -119,8 +119,8 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: notes # blog_name will be displayed in your blog page
-blog_description: implementation notes and informal paper explanations
+blog_name: blog # blog_name will be displayed in your blog page
+blog_description: ""
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
 
@@ -236,6 +236,8 @@ exclude:
   - gems/
   - migrations/
   - vendor
+  - wikontic_materials
+  - gradmem_materials
 keep_files:
   - CNAME
   - .nojekyll
@@ -330,8 +332,8 @@ jekyll-archives:
   books:
     enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
 
-display_tags: ["paper-notes", "implementation", "evaluation", "language-models"] # these tags will be displayed on the front page of your blog
-display_categories: ["research-notes"] # these categories will be displayed on the front page of your blog
+display_tags: [] #["paper-notes", "implementation", "evaluation", "language-models"] # these tags will be displayed on the front page of your blog
+display_categories: [] #["research-notes"] # these categories will be displayed on the front page of your blog
 
 # -----------------------------------------------------------------------------
 # Jekyll Scholar
@@ -361,6 +363,8 @@ scholar:
   query: "@*"
   group_by: year
   group_order: descending
+
+  separate_links: true
 
 # Display different badges withs stats for your publications
 # Customize badge behavior in _layouts/bib.liquid
