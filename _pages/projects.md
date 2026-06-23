@@ -9,6 +9,14 @@ nav_order: 3
 horizontal: false
 ---
 
+<style>
+  .projects .card-meta {
+    color: var(--global-text-color-light);
+    font-size: 0.88rem;
+    margin: -0.25rem 0 0.5rem;
+  }
+</style>
+
 <!-- pages/projects.md -->
 <div class="projects">
 {% if site.enable_project_categories and page.display_categories %}

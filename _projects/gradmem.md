@@ -9,6 +9,8 @@ img: /assets/img/gradmem/gradmem-overview-short.png
 github: https://github.com/yurakuratov/gradmem
 related_publications: false
 venue: ICML 2026
+venue_abbr: ICML
+year: 2026
 authors:
   - Yuri Kuratov
   - Matvey Kairov

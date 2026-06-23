@@ -8,7 +8,9 @@ permalink: /research/wikontic/
 img: /assets/img/wikontic/wikontic-pipeline.png
 github: https://github.com/screemix/Wikontic
 related_publications: false
-venue: EACL 2026
+venue: EACL 2026, AAAI 2026 (Demo)
+venue_abbr: EACL
+year: 2026
 authors:
   - Alla Chepurova
   - Aydar Bulatov
